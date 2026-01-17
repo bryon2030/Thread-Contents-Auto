@@ -22,7 +22,8 @@ export function TargetStep() {
             if (err.message === 'OpenAI API Call Failed' || err.message === 'Gemini API Call Failed') {
                 setError('API 호출에 실패했습니다. 설정에서 API Key를 확인해주세요.');
             } else {
-                setError('키워드를 생성하지 못했습니다. 잠시 후 다시 시도해주세요.');
+                // Show actual error for debugging
+                setError(`키워드를 생성하지 못했습니다. (${err.message})`);
             }
         } finally {
             setLoading(false);

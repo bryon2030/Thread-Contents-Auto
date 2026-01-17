@@ -90,11 +90,17 @@ export const OpenAIService = {
       Target Audience: 40-60s.
       Task: Write 3 different versions of a Thread post.
       
+      Structure for each post:
+      1. Hook (Title): A catchy one-line headline at the very top.
+      2. Body: Clear paragraphs with distinct line breaks between ideas. Avoid dense blocks of text.
+      3. Conclusion/Call to action.
+      
       Version 1 (Concern): Empathize with the problem.
       Version 2 (Process): Share a journey/attempt (Recommended).
       Version 3 (Routine): Suggest a small habit/tool.
 
       Output Format: JSON array of objects with keys: "type" (concern|process|routine), "title", "content".
+      IMPORTANT: The "content" field MUST start with the Hook/Title, followed by two newlines (\n\n), and then the body text.
       Language: Korean.
       Do not include hashtags unless necessary.
     `;

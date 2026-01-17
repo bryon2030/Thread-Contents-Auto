@@ -77,7 +77,14 @@ export const GeminiService = {
       Length: ${length} lines
       Target: 40-60s.
       Write 3 versions: 1.Concern, 2.Process, 3.Routine.
+      
+      Structure:
+      - Start with a Hook (Title) at the top.
+      - Add two newlines (\n\n).
+      - Then write the body with clear styling and line breaks.
+      
       Return ONLY a JSON array of objects with keys: type, title, content.
+      The "content" field MUST include the Hook/Title at the start.
       Language: Korean.
     `;
 

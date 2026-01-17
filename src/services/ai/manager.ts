@@ -6,8 +6,9 @@ import type { AppSettings, Keyword, Topic, Draft } from '../../types';
 export const AIManager = {
     async generateKeywords(settings: AppSettings, target: string): Promise<Keyword[]> {
         if (!settings.apiKey || settings.apiKey.trim() === '') {
-            console.log('Using Demo Service (No Key)');
-            return DemoService.generateKeywords(target);
+            // console.log('Using Demo Service (No Key)');
+            // return DemoService.generateKeywords(target);
+            throw new Error('API Key Required (체험판 모드가 비활성화되었습니다)');
         }
 
         try {
@@ -23,7 +24,7 @@ export const AIManager = {
     },
 
     async generateTopics(settings: AppSettings, keywords: string[]): Promise<Topic[]> {
-        if (!settings.apiKey) return DemoService.generateTopics(keywords);
+        if (!settings.apiKey) throw new Error('API Key Required');
 
         try {
             if (settings.provider === 'openai') {
@@ -38,7 +39,7 @@ export const AIManager = {
     },
 
     async generateDrafts(settings: AppSettings, topic: string, context: string): Promise<Draft[]> {
-        if (!settings.apiKey) return DemoService.generateDrafts(topic, context, settings.tone, settings.length);
+        if (!settings.apiKey) throw new Error('API Key Required');
 
         try {
             if (settings.provider === 'openai') {
