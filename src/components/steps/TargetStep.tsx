@@ -33,6 +33,18 @@ export function TargetStep() {
         <div className="card" style={{ padding: '2rem' }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '1rem' }}>
                 누구를 위한 글인가요?
+                <span style={{
+                    fontSize: '0.8rem',
+                    padding: '4px 8px',
+                    borderRadius: '12px',
+                    marginLeft: '10px',
+                    backgroundColor: settings.apiKey ? 'hsl(var(--color-primary))' : 'hsl(var(--color-bg-secondary))',
+                    color: settings.apiKey ? 'white' : 'hsl(var(--color-text-secondary))',
+                    verticalAlign: 'middle',
+                    fontWeight: 'normal'
+                }}>
+                    {settings.apiKey ? '✨ AI 연동됨' : '🌱 체험판 모드'}
+                </span>
             </h2>
             <p style={{ color: 'hsl(var(--color-text-secondary))', marginBottom: '1.5rem' }}>
                 타겟 독자를 한 문장으로 설명해주세요.
