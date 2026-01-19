@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>구글 시트 연동 가이드</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px;
+            color: #333;
+        }
+        h1 { border-bottom: 2px solid #333; padding-bottom: 10px; margin-bottom: 30px; }
+        h2 { margin-top: 40px; color: #1a73e8; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        code { background-color: #f5f5f5; padding: 2px 5px; border-radius: 4px; font-family: monospace; }
+        pre { background-color: #f5f5f5; padding: 15px; border-radius: 8px; overflow-x: auto; border: 1px solid #ddd; }
+        ol { padding-left: 20px; }
+        li { margin-bottom: 10px; }
+        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; font-weight: bold; }
+        .print-instruction {
+            background-color: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #ffeeba;
+            text-align: center;
+        }
+        @media print {
+            .print-instruction { display: none; }
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="print-instruction">
+        🖨️ <b>PDF로 저장하는 방법:</b><br>
+        키보드의 <code>Ctrl</code> + <code>P</code> (인쇄)를 누른 뒤,<br>
+        대상(프린터)을 <b>'PDF로 저장'</b>으로 선택하여 저장하세요.
+    </div>
+
+    <h1>구글 시트 연동 설정 가이드</h1>
+    <p>쓰레드 자동화 프로그램과 구글 시트를 연결하여, 생성된 글을 자동으로 저장하는 방법을 안내합니다.</p>
+
+    <h2>1단계: 구글 시트 준비 및 스크립트 작성</h2>
+    <ol>
+        <li>데이터를 저장할 <b>새 구글 시트</b>를 만듭니다 (또는 기존 시트 열기).</li>
+        <li>상단 메뉴에서 <b>[확장 프로그램]</b> &gt; <b>[Apps Script]</b>를 클릭합니다.</li>
+        <li>코드 입력창에 있는 기존 내용을 모두 지우고, 아래 코드를 복사해서 붙여넣습니다.</li>
+    </ol>
+
+    <pre><code>function doPost(e){
+  var d = JSON.parse(e.postData.contents);
+  var s = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  // 저장할 데이터 순서: 날짜, 주제, 요약, 내생각, 본문
+  s.appendRow([new Date(), d.topic, d.summary, d.thoughts, d.draft]);
+  return ContentService.createTextOutput("OK");
+}</code></pre>
+
+    <p>4. 좌측 상단 디스크 아이콘(💾)을 눌러 프로젝트를 <b>저장</b>합니다.</p>
+
+    <h2>2단계: 웹 앱으로 배포하기 (가장 중요!)</h2>
+    <p>프로그램이 이 시트에 접근할 수 있도록 권한을 설정하는 단계입니다.</p>
+    <ol>
+        <li>우측 상단 <b>[배포]</b> 버튼 &gt; <b>[새 배포]</b>를 클릭합니다.</li>
+        <li><b>'유형 선택'</b> 톱니바퀴 아이콘을 누르고 <b>[웹 앱]</b>을 선택합니다.</li>
+        <li>설정을 아래와 같이 <b>정확하게</b> 맞춰주세요. (하나라도 다르면 작동 안 함!)</li>
+    </ol>
+
+    <table>
+        <tr>
+            <th>항목</th>
+            <th>설정값</th>
+            <th>이유</th>
+        </tr>
+        <tr>
+            <td>설명</td>
+            <td>(상관없음)</td>
+            <td></td>
+        </tr>
+        <tr>
+            <td><b>다음 사용자 인증 정보로 실행</b></td>
+            <td><b>나 (Me)</b></td>
+            <td>스크립트 소유자인 '나'의 권한으로 실행해야 합니다.</td>
+        </tr>
+        <tr>
+            <td><b>액세스 권한이 있는 사용자</b></td>
+            <td><b>모든 사용자 (Anyone)</b></td>
+            <td>프로그램이 로그인 없이도 데이터를 보낼 수 있어야 합니다.</td>
+        </tr>
+    </table>
+
+    <p>4. <b>[배포]</b> 버튼을 클릭합니다.</p>
+
+    <h2>3단계: 권한 승인 (최초 1회)</h2>
+    <p>처음 배포할 때는 구글 보안 경고창이 뜹니다. 본인이 만든 것이므로 안전합니다.</p>
+    <ol>
+        <li><b>[액세스 승인]</b> 버튼 클릭.</li>
+        <li>본인 구글 계정 선택.</li>
+        <li><b>"Google hasn’t verified this app"</b> 경고창이 나오면:
+            <ul>
+                <li>좌측 하단 <b>[Advanced (고급)]</b> 클릭.</li>
+                <li>맨 아래 <b>Go to ... (unsafe) / ...로 이동(안전하지 않음)</b> 클릭.</li>
+            </ul>
+        </li>
+        <li><b>[Allow (허용)]</b> 또는 <b>[Continue (계속)]</b> 클릭.</li>
+    </ol>
+
+    <h2>4단계: 주소 연결하기</h2>
+    <p>배포가 완료되면 <b>웹 앱 URL</b>이 생성됩니다.</p>
+    <ol>
+        <li><b>웹 앱 URL</b> (<code>https://script.google.com/.../exec</code> 로 끝남)을 <b>복사</b>합니다.</li>
+        <li>쓰레드 자동화 프로그램의 <b>설정(⚙️)</b> 메뉴를 엽니다.</li>
+        <li><b>[구글 시트 연동 (Webhook URL)]</b> 칸에 복사한 주소를 붙여넣습니다. (뒤에 공백이 없는지 확인!)</li>
+        <li><b>[구글 시트 바로가기 Button]</b> 칸에는 현재 보고 있는 시트의 주소창 URL(<code>https://docs.google.com/...</code>)을 복사해서 넣습니다.</li>
+        <li><b>[설정 저장]</b>을 누르면 완료!</li>
+    </ol>
+
+    <p style="margin-top: 40px; color: #666; font-size: 0.9em; text-align: center;">강의용 자료로 활용하세요. 감사합니다.</p>
+
+</body>
+</html>

@@ -117,10 +117,33 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                         </select>
                     </div>
 
+                    {/* Google Sheet Viewer URL */}
+                    <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+                            <label style={{ fontWeight: 600 }}>1. 구글 시트 주소 (바로가기용)</label>
+                        </div>
+                        <input
+                            type="text"
+                            value={localSettings.googleSheetViewUrl || ''}
+                            onChange={(e) => setLocalSettings({ ...localSettings, googleSheetViewUrl: e.target.value })}
+                            placeholder="https://docs.google.com/spreadsheets/d/..."
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid hsl(var(--color-border))',
+                                fontSize: '0.875rem'
+                            }}
+                        />
+                        <div style={{ fontSize: '0.75rem', color: 'hsl(var(--color-text-secondary))', marginTop: '4px', marginBottom: '1.25rem' }}>
+                            현재 보고 계신 구글 시트의 주소창 URL을 복사해서 넣어주세요.
+                        </div>
+                    </div>
+
                     {/* Google Sheet Webhook */}
                     <div>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                            <label style={{ fontWeight: 600 }}>구글 시트 연동 (선택)</label>
+                            <label style={{ fontWeight: 600 }}>2. 데이터 연동 (Webhook URL)</label>
                         </div>
                         <input
                             type="text"
@@ -137,7 +160,7 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                         />
                         <div style={{ fontSize: '0.75rem', color: 'hsl(var(--color-text-secondary))', marginTop: '6px' }}>
                             <details>
-                                <summary style={{ cursor: 'pointer' }}>연동 방법 보기 (웹훅 URL 발급)</summary>
+                                <summary style={{ cursor: 'pointer' }}>웹 앱 URL 발급 방법 (데이터 저장용)</summary>
                                 <ol style={{ paddingLeft: '1.2rem', marginTop: '4px', lineHeight: '1.5', background: 'hsl(var(--color-surface))', padding: '8px 1.2rem', borderRadius: '4px' }}>
                                     <li>구글 시트 메뉴: <b>확장 프로그램 &gt; Apps Script</b> 클릭</li>
                                     <li>코드창에 아래 코드를 복사해서 붙여넣기 (기존 내용 삭제)</li>
@@ -174,28 +197,7 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                         </div>
                     </div>
 
-                    {/* Google Sheet Viewer URL */}
-                    <div>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
-                            <label style={{ fontWeight: 600 }}>구글 시트 바로가기 (선택)</label>
-                        </div>
-                        <input
-                            type="text"
-                            value={localSettings.googleSheetViewUrl || ''}
-                            onChange={(e) => setLocalSettings({ ...localSettings, googleSheetViewUrl: e.target.value })}
-                            placeholder="https://docs.google.com/spreadsheets/d/..."
-                            style={{
-                                width: '100%',
-                                padding: '10px',
-                                borderRadius: 'var(--radius-sm)',
-                                border: '1px solid hsl(var(--color-border))',
-                                fontSize: '0.875rem'
-                            }}
-                        />
-                        <div style={{ fontSize: '0.75rem', color: 'hsl(var(--color-text-secondary))', marginTop: '4px' }}>
-                            저장 후 '바로 보러가기' 버튼을 위해 사용됩니다.
-                        </div>
-                    </div>
+
 
                     {/* Preferences */}
                     <div style={{ display: 'flex', gap: '1rem' }}>

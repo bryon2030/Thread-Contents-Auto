@@ -1,0 +1,479 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>쓰레드 자동화 프로그램 1.1 사용 가이드</title>
+  <meta name="description" content="전문가형 큐레이션 콘텐츠를 쉽고 빠르게 만드는 쓰레드 자동화 프로그램 1.1 사용 가이드" />
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2e;
+      --card2:#111f39;
+      --text:#e8eefc;
+      --muted:#a9b7d8;
+      --line:rgba(255,255,255,.08);
+      --accent:#7c9cff;
+      --good:#53e3a6;
+      --warn:#ffd56a;
+
+      /* heading highlight colors */
+      --h1bg:#cfe8ff; /* light blue */
+      --h2bg:#d8ffe7; /* light green */
+      --h3bg:#fff2b8; /* light yellow */
+      --hText:#0b1220;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 10% 10%, rgba(124,156,255,.18), transparent 55%),
+                  radial-gradient(1000px 600px at 90% 20%, rgba(83,227,166,.14), transparent 55%),
+                  radial-gradient(900px 700px at 60% 90%, rgba(255,213,106,.12), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      line-height:1.6;
+    }
+    a{color:inherit}
+    .container{max-width:1100px;margin:0 auto;padding:28px 18px 70px}
+    .topbar{
+      display:flex;align-items:center;justify-content:space-between;
+      gap:12px;margin-bottom:18px;
+    }
+    .brand{
+      display:flex;align-items:center;gap:10px;
+      font-weight:800;letter-spacing:-.2px
+    }
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background: linear-gradient(135deg, rgba(124,156,255,.9), rgba(83,227,166,.85));
+      box-shadow:0 10px 30px rgba(0,0,0,.35);
+    }
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:8px 12px;border:1px solid var(--line);border-radius:999px;
+      background: rgba(255,255,255,.04);
+      color:var(--muted);
+      font-size:13px;
+      white-space:nowrap;
+    }
+    .hero{
+      display:grid;grid-template-columns:1.25fr .75fr;gap:16px;
+      align-items:stretch;
+      margin:16px 0 18px;
+    }
+    @media (max-width: 920px){
+      .hero{grid-template-columns:1fr}
+    }
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:0 18px 60px rgba(0,0,0,.35);
+      overflow:hidden;
+    }
+    .hero-main{padding:22px 22px 18px}
+    .hero-side{padding:18px}
+    .kicker{
+      display:inline-flex;align-items:center;gap:10px;
+      padding:8px 12px;border-radius:999px;
+      background: rgba(124,156,255,.10);
+      border:1px solid rgba(124,156,255,.22);
+      color:#dbe6ff;
+      font-size:13px;
+      margin-bottom:12px;
+    }
+
+    /* Highlight heading blocks (h1/h2/h3) */
+    .h1box,.h2box,.h3box{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:10px;
+      color:var(--hText);
+      font-weight:900;
+      letter-spacing:-.3px;
+    }
+    .h1box{background:var(--h1bg); font-size:28px}
+    @media (max-width: 520px){ .h1box{font-size:24px} }
+    .h2box{background:var(--h2bg); font-size:20px}
+    .h3box{background:var(--h3bg); font-size:16px}
+
+    .lead{margin:12px 0 16px;color:var(--muted);font-size:15px}
+    .cta-row{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+    .btn{
+      display:inline-flex;align-items:center;justify-content:center;gap:10px;
+      padding:12px 14px;border-radius:14px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color:var(--text);
+      text-decoration:none;
+      font-weight:700;
+      transition: transform .12s ease, background .12s ease;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:hover{transform: translateY(-1px); background: rgba(255,255,255,.08)}
+    .btn.primary{
+      border-color: rgba(124,156,255,.38);
+      background: linear-gradient(135deg, rgba(124,156,255,.28), rgba(83,227,166,.18));
+    }
+    .btn.ghost{background: transparent}
+    .stats{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:10px;
+      margin-top:14px;
+    }
+    @media (max-width: 520px){ .stats{grid-template-columns:1fr} }
+    .stat{
+      padding:12px;border-radius:16px;border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+    }
+    .stat b{display:block;font-size:14px}
+    .stat span{color:var(--muted);font-size:12px}
+
+    .side-title{margin:0 0 10px}
+    .checklist{display:grid;gap:10px;margin:10px 0 0;padding:0;list-style:none}
+    .check{
+      display:flex;gap:10px;align-items:flex-start;
+      padding:12px;border-radius:16px;border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .dot{
+      width:10px;height:10px;border-radius:999px;margin-top:6px;flex:0 0 auto;
+      background: var(--good);
+      box-shadow:0 0 0 4px rgba(83,227,166,.10);
+    }
+    .dot.warn{background: var(--warn); box-shadow:0 0 0 4px rgba(255,213,106,.12);}
+    .dot.acc{background: var(--accent); box-shadow:0 0 0 4px rgba(124,156,255,.12);}
+
+    .grid{
+      display:grid;grid-template-columns:repeat(12,1fr);gap:14px;margin-top:14px;
+    }
+    .col-8{grid-column:span 8}
+    .col-4{grid-column:span 4}
+    @media (max-width: 920px){
+      .col-8,.col-4{grid-column:span 12}
+    }
+    .section{padding:18px 18px 16px}
+    .section p{color:var(--muted);margin:10px 0 0}
+
+    .steps{display:grid;gap:12px;margin-top:12px}
+    .step{
+      padding:14px;border-radius:18px;border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .step-head{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .badge{
+      font-size:12px;color:#dbe6ff;
+      padding:6px 10px;border-radius:999px;
+      border:1px solid rgba(124,156,255,.22);
+      background: rgba(124,156,255,.10);
+      white-space:nowrap;
+    }
+    .step ul{margin:10px 0 0 18px;color:var(--muted)}
+    .step li{margin:6px 0}
+    .highlight{
+      display:inline-block;
+      padding:2px 8px;border-radius:999px;
+      background: rgba(83,227,166,.12);
+      border:1px solid rgba(83,227,166,.18);
+      color:#d8fff0;
+      font-weight:700;
+      font-size:12px;
+      vertical-align:middle;
+    }
+    .kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono","Courier New", monospace;
+      font-size:12px;
+      padding:2px 6px;
+      border-radius:8px;
+      background: rgba(0,0,0,.25);
+      border:1px solid var(--line);
+      color:#e9efff;
+    }
+
+    .callout{
+      margin-top:12px;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px dashed rgba(255,255,255,.18);
+      background: rgba(0,0,0,.14);
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .mini-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:12px}
+    @media (max-width: 520px){ .mini-grid{grid-template-columns:1fr} }
+    .mini{
+      padding:12px;border-radius:16px;border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+    }
+    .mini b{display:block;margin-bottom:4px}
+    .mini p{margin:0;color:var(--muted);font-size:13px}
+
+    .footer{
+      margin-top:18px;
+      padding:18px;
+      color:rgba(233,239,255,.75);
+      font-size:12px;
+      border-top:1px solid var(--line);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div style="font-size:14px;opacity:.9">Threads Automation</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:1px">사용 가이드 · v1.1</div>
+        </div>
+      </div>
+      <div class="pill">⚙️ 설정 → ✍️ 제작 → 💾 저장</div>
+    </div>
+
+    <div class="hero">
+      <div class="card hero-main">
+        <div class="kicker">✨ “전문가형 큐레이션 콘텐츠”를 쉽고 빠르게</div>
+        <div>
+          <span class="h1box">쓰레드 자동화 프로그램 1.1 사용 가이드</span>
+        </div>
+        <p class="lead">
+          단순 AI 글쓰기를 넘어, <b>신뢰할 수 있는 자료(기사/전문 자료)</b>를 바탕으로
+          <b>나만의 인사이트</b>가 담긴 고퀄리티 Threads 게시물을 완성합니다.
+        </p>
+
+        <div class="cta-row">
+          <a class="btn primary" href="#start">바로 시작하기</a>
+          <a class="btn ghost" href="#workflow">5단계 워크플로우 보기</a>
+          <a class="btn ghost" href="#save">저장/활용 방법</a>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <b>핵심 가치</b>
+            <span>큐레이션 + 요약 + 인사이트</span>
+          </div>
+          <div class="stat">
+            <b>작업 흐름</b>
+            <span>Target → Keywords → Topics → Curator → Drafts</span>
+          </div>
+          <div class="stat">
+            <b>기록</b>
+            <span>전체 내역 복사 + 구글 시트 자동 저장</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card hero-side">
+        <div class="side-title"><span class="h2box">한눈에 보는 준비물</span></div>
+        <ul class="checklist">
+          <li class="check">
+            <span class="dot acc" aria-hidden="true"></span>
+            <div>
+              <b>AI 제공자 선택</b>
+              <div style="color:var(--muted);font-size:13px">OpenAI(ChatGPT) 또는 Gemini</div>
+            </div>
+          </li>
+          <li class="check">
+            <span class="dot" aria-hidden="true"></span>
+            <div>
+              <b>API Key 입력</b>
+              <div style="color:var(--muted);font-size:13px">없으면 <span class="highlight">체험판 모드</span>로 더미 데이터 사용</div>
+            </div>
+          </li>
+          <li class="check">
+            <span class="dot warn" aria-hidden="true"></span>
+            <div>
+              <b>구글 시트 연동(선택)</b>
+              <div style="color:var(--muted);font-size:13px">콘텐츠를 자동 기록/축적</div>
+            </div>
+          </li>
+        </ul>
+
+        <div class="callout">
+          Tip) 우측 상단 <span class="kbd">⚙️ 설정</span> 버튼에서 먼저 환경 세팅을 끝내면 제작 속도가 훨씬 빨라집니다.
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <section id="start" class="card section col-8">
+        <div><span class="h2box">🚀 시작하기: 기본 설정</span></div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">AI 제공자 선택</span></div>
+              <span class="badge">OpenAI 또는 Gemini</span>
+            </div>
+            <ul>
+              <li>우측 상단 <span class="kbd">⚙️ 설정</span>에서 사용 모델을 선택합니다.</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">API Key 입력</span></div>
+              <span class="badge">없으면 체험판</span>
+            </div>
+            <ul>
+              <li>선택한 제공자의 API 키를 입력합니다.</li>
+              <li>키가 없으면 <span class="highlight">체험판 모드</span>로 동작하며 더미 데이터가 사용됩니다.</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">구글 시트 연동 (선택)</span></div>
+              <span class="badge">자동 기록</span>
+            </div>
+            <ul>
+              <li>설정 창의 <b>[연동 방법 보기]</b>에서 안내되는 스크립트를 복사합니다.</li>
+              <li>구글 스프레드시트 → <b>확장 프로그램</b> → <b>Apps Script</b>에 붙여넣고 <b>배포</b>합니다.</li>
+              <li>생성된 <b>웹 앱 URL</b>을 설정 창에 입력 후 저장하세요.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <aside class="card section col-4">
+        <div><span class="h2box">✅ 이 페이지 활용법</span></div>
+        <div class="mini-grid">
+          <div class="mini">
+            <b>운영/온보딩용</b>
+            <p>수강생/사용자에게 “이 링크 하나”로 안내</p>
+          </div>
+          <div class="mini">
+            <b>제품 소개용</b>
+            <p>기능 강점과 흐름을 한 번에 전달</p>
+          </div>
+          <div class="mini">
+            <b>업데이트용</b>
+            <p>v1.2, v1.3로 바뀔 때 섹션만 교체</p>
+          </div>
+          <div class="mini">
+            <b>가이드 확장</b>
+            <p>스크린샷/영상 섹션을 추가하면 완성도 상승</p>
+          </div>
+        </div>
+      </aside>
+
+      <section id="workflow" class="card section col-8">
+        <div><span class="h2box">✍️ 콘텐츠 제작 워크플로우 (5단계)</span></div>
+        <p>아래 순서대로 진행하면, 자료 기반 + 인사이트 포함된 쓰레드 원고가 완성됩니다.</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">1단계: 타겟 설정 (Target)</span></div>
+              <span class="badge">누구를 위한 글?</span>
+            </div>
+            <ul>
+              <li>내 글을 읽었으면 하는 독자를 정의합니다.</li>
+              <li>예시: 30대 직장인 / 다이어트를 시작하려는 사람 / 노션으로 일정 관리하고 싶은 학생</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">2단계: 키워드 선정 (Keywords)</span></div>
+              <span class="badge">관심사 선택</span>
+            </div>
+            <ul>
+              <li>타겟이 관심 있어 할 키워드를 AI가 추천합니다.</li>
+              <li>원하는 키워드를 클릭해 선택하세요.</li>
+              <li><b>직접 입력</b>: 목록에 없는 단어는 입력 후 <b>+ 추가</b>로 넣을 수 있습니다.</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">3단계: 주제 선정 (Topics)</span></div>
+              <span class="badge">글감 확정</span>
+            </div>
+            <ul>
+              <li>선택한 키워드를 바탕으로 여러 가지 주제가 생성됩니다.</li>
+              <li>가장 마음에 들고 지금 쓰고 싶은 주제 1개를 선택합니다.</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">4단계: 기사 큐레이션 (Curator) 🔥 Core Feature</span></div>
+              <span class="badge">전문성 결정</span>
+            </div>
+            <ul>
+              <li><b>[AI 기사 추천 받기]</b>: 관련 전문 자료/뉴스 기사를 찾아줍니다.</li>
+              <li><b>자료 선택 및 수정</b>: 마음에 드는 자료를 체크하고, 링크/내용이 마음에 안 들면 직접 수정 가능합니다.</li>
+              <li><b>[AI 요약 생성]</b>: 선택한 자료들의 핵심 내용을 요약합니다.</li>
+              <li><b>내 생각(Insight) 추가</b>: 요약된 정보에 내 경험/견해/한마디를 더해 글의 차별점을 만듭니다.</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">5단계: 글 완성 (Drafts)</span></div>
+              <span class="badge">3가지 스타일</span>
+            </div>
+            <ul>
+              <li>기사 + 요약 + 내 생각을 바탕으로 <b>3가지 스타일</b> 글이 생성됩니다.</li>
+              <li><b>고민 정리형</b>: 공감 → 해결책 제시</li>
+              <li><b>과정 공유형</b>: 경험/과정 공개로 신뢰 확보</li>
+              <li><b>루틴/도구형</b>: 구체적인 방법론/팁 전수</li>
+              <li>마음에 드는 스타일을 고른 뒤 내용을 자유롭게 수정할 수 있습니다.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="save" class="card section col-4">
+        <div><span class="h2box">💾 저장 및 활용</span></div>
+        <p>최종 화면에서 결과물을 다양한 방식으로 바로 활용할 수 있습니다.</p>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">복사하고 쓰레드 열기</span></div>
+              <span class="badge">즉시 발행</span>
+            </div>
+            <ul>
+              <li>본문을 복사하고 바로 쓰레드 작성창을 띄웁니다.</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">전체 내역 복사하기</span></div>
+              <span class="badge">노션 기록 추천</span>
+            </div>
+            <ul>
+              <li>기사 링크, 요약문, 내 생각, 본문까지 모든 조사 과정을 클립보드에 복사합니다.</li>
+            </ul>
+          </div>
+
+          <div class="step">
+            <div class="step-head">
+              <div><span class="h3box">구글 시트에 자동 저장하기</span></div>
+              <span class="badge">원클릭 저장</span>
+            </div>
+            <ul>
+              <li>설정에서 연동을 마치면 버튼이 활성화됩니다.</li>
+              <li>버튼 한 번으로 <b>[주제 - 요약 - 내생각 - 본문]</b>이 내 구글 시트에 한 줄로 저장됩니다.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="callout">
+          운영 팁) 사용자 경험은 “<b>설정 완료 → 5단계 진행 → 1번 클릭 저장</b>”이 핵심입니다.
+        </div>
+      </section>
+    </div>
+
+    <div class="footer">
+      © Threads Automation Guide · v1.1<br/>
+      이 페이지는 “가이드 전달용 랜딩페이지”로 최적화되어 있습니다.
+    </div>
+  </div>
+</body>
+</html>
