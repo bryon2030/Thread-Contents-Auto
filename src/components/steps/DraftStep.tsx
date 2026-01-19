@@ -66,7 +66,7 @@ export function DraftStep() {
             };
 
             await GoogleSheetService.saveToSheet(settings.googleSheetUrl, data);
-            alert('구글 시트에 성공적으로 저장되었습니다!');
+            alert('구글 시트로 데이터가 전송되었습니다!\n(반영까지 1~3초 정도 걸릴 수 있습니다.)');
         } catch (e) {
             console.error(e);
             alert('저장에 실패했습니다. URL을 확인해주세요.');
