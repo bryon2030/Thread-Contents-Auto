@@ -174,6 +174,29 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                         </div>
                     </div>
 
+                    {/* Google Sheet Viewer URL */}
+                    <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+                            <label style={{ fontWeight: 600 }}>구글 시트 바로가기 (선택)</label>
+                        </div>
+                        <input
+                            type="text"
+                            value={localSettings.googleSheetViewUrl || ''}
+                            onChange={(e) => setLocalSettings({ ...localSettings, googleSheetViewUrl: e.target.value })}
+                            placeholder="https://docs.google.com/spreadsheets/d/..."
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid hsl(var(--color-border))',
+                                fontSize: '0.875rem'
+                            }}
+                        />
+                        <div style={{ fontSize: '0.75rem', color: 'hsl(var(--color-text-secondary))', marginTop: '4px' }}>
+                            저장 후 '바로 보러가기' 버튼을 위해 사용됩니다.
+                        </div>
+                    </div>
+
                     {/* Preferences */}
                     <div style={{ display: 'flex', gap: '1rem' }}>
                         <div style={{ flex: 1 }}>

@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Copy, RefreshCw, Check, FileText, Save } from 'lucide-react';
+import { Copy, RefreshCw, Check, FileText, Save, ExternalLink } from 'lucide-react';
 import { useApp } from '../../store/AppContext';
 import { AIManager } from '../../services/ai/manager';
 import { GoogleSheetService } from '../../services/googleSheet';
@@ -207,6 +207,15 @@ export function DraftStep() {
                         style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px', border: '1px solid #107c41', color: '#107c41', backgroundColor: 'white' }}
                     >
                         {savingSheet ? '저장 중...' : <><Save size={20} /> 구글 시트에 자동 저장하기</>}
+                    </button>
+                )}
+
+                {settings.googleSheetViewUrl && (
+                    <button
+                        onClick={() => window.open(settings.googleSheetViewUrl, '_blank')}
+                        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '12px', color: '#107c41', fontSize: '0.9rem', marginTop: '-8px' }}
+                    >
+                        <ExternalLink size={16} /> 저장된 시트 바로 열기
                     </button>
                 )}
 

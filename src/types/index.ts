@@ -11,6 +11,7 @@ export interface AppSettings {
     tone: Tone;
     length: LengthOption;
     googleSheetUrl?: string; // Webhook URL
+    googleSheetViewUrl?: string; // Viewer URL
 }
 
 export interface Keyword {
