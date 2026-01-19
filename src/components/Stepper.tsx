@@ -2,7 +2,7 @@ import { useApp } from '../store/AppContext';
 
 export function Stepper() {
     const { app } = useApp();
-    const steps = ['타겟 설정', '키워드', '주제 선정', '글 완성'];
+    const steps = ['타겟 설정', '키워드', '주제 선정', '기사 추천', '글 완성'];
 
     // Don't show stepper in Settings view (step 0), show from step 1
     if (app.step === 0) return null;
@@ -13,8 +13,8 @@ export function Stepper() {
             <div style={{
                 position: 'absolute',
                 top: '50%',
-                left: '0',
-                right: '0',
+                left: '20px',
+                right: '20px',
                 height: '2px',
                 background: 'hsl(var(--color-border))',
                 zIndex: 0,
@@ -25,7 +25,7 @@ export function Stepper() {
             <div style={{
                 position: 'absolute',
                 top: '50%',
-                left: '0',
+                left: '20px',
                 height: '2px',
                 background: 'hsl(var(--color-primary))',
                 zIndex: 0,

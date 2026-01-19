@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react';
-import type { AppSettings, AppState, Keyword, Topic, Draft } from '../types';
+import type { AppSettings, AppState, Keyword, Topic, Draft, Article } from '../types';
 import { StorageService } from '../services/storage';
 
 // --- State Definitions ---
@@ -9,7 +9,8 @@ const DEFAULT_SETTINGS: AppSettings = {
     apiKey: '',
     storageOption: 'none',
     tone: 'dry',
-    length: '5'
+    length: '5',
+    googleSheetUrl: ''
 };
 
 const INITIAL_APP_STATE: AppState = {
@@ -18,7 +19,10 @@ const INITIAL_APP_STATE: AppState = {
     targetInput: '',
     keywords: [],
     topics: [],
-    drafts: []
+    drafts: [],
+    articles: [],
+    articleSummary: '',
+    userThoughts: ''
 };
 
 // --- Actions ---
@@ -35,6 +39,11 @@ type Action =
     | { type: 'SELECT_TOPIC'; payload: string }
     | { type: 'SET_TOPIC_CONTEXT'; payload: { id: string; context: string } }
     | { type: 'SET_DRAFTS'; payload: Draft[] }
+    | { type: 'SET_ARTICLES'; payload: Article[] }
+    | { type: 'TOGGLE_ARTICLE'; payload: string }
+    | { type: 'UPDATE_ARTICLE'; payload: { id: string; updates: Partial<Article> } }
+    | { type: 'SET_ARTICLE_SUMMARY'; payload: string }
+    | { type: 'SET_USER_THOUGHTS'; payload: string }
     | { type: 'RESET_FLOW' };
 
 // --- Reducer ---
@@ -76,6 +85,24 @@ function reducer(state: { settings: AppSettings; app: AppState }, action: Action
         }
         case 'SET_DRAFTS':
             return { ...state, app: { ...state.app, drafts: action.payload } };
+        case 'SET_ARTICLES':
+            return { ...state, app: { ...state.app, articles: action.payload } };
+        case 'TOGGLE_ARTICLE': {
+            const newArticles = state.app.articles.map(a =>
+                a.id === action.payload ? { ...a, selected: !a.selected } : a
+            );
+            return { ...state, app: { ...state.app, articles: newArticles } };
+        }
+        case 'UPDATE_ARTICLE': {
+            const newArticles = state.app.articles.map(a =>
+                a.id === action.payload.id ? { ...a, ...action.payload.updates } : a
+            );
+            return { ...state, app: { ...state.app, articles: newArticles } };
+        }
+        case 'SET_ARTICLE_SUMMARY':
+            return { ...state, app: { ...state.app, articleSummary: action.payload } };
+        case 'SET_USER_THOUGHTS':
+            return { ...state, app: { ...state.app, userThoughts: action.payload } };
         case 'RESET_FLOW':
             return {
                 ...state,

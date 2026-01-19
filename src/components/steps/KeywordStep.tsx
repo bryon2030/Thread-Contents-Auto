@@ -7,6 +7,7 @@ export function KeywordStep() {
     const { app, settings, dispatch } = useApp();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [customKeyword, setCustomKeyword] = useState('');
 
     const selectedCount = app.keywords.filter(k => k.selected).length;
 
@@ -40,6 +41,17 @@ export function KeywordStep() {
         dispatch({ type: 'UPDATE_KEYWORD', payload: { id, updates: { text } } });
     };
 
+    const handleAddKeyword = () => {
+        if (!customKeyword.trim()) return;
+        const newKeyword = {
+            id: Date.now().toString(),
+            text: customKeyword.trim(),
+            selected: true
+        };
+        dispatch({ type: 'SET_KEYWORDS', payload: [...app.keywords, newKeyword] });
+        setCustomKeyword('');
+    };
+
     return (
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
             <h2 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
@@ -47,7 +59,33 @@ export function KeywordStep() {
             </h2>
             <p style={{ color: 'hsl(var(--color-text-secondary))', marginBottom: '2rem' }}>
                 관심 있는 키워드를 선택해주세요. 텍스트를 직접 수정할 수도 있습니다.
+                관심 있는 키워드를 선택해주세요. 텍스트를 직접 수정할 수도 있습니다.
             </p>
+
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '1.5rem' }}>
+                <input
+                    type="text"
+                    value={customKeyword}
+                    onChange={(e) => setCustomKeyword(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddKeyword()}
+                    placeholder="원하는 키워드 직접 입력"
+                    style={{
+                        flex: 1,
+                        padding: '12px',
+                        borderRadius: 'var(--radius-md)',
+                        border: '1px solid hsl(var(--color-border))',
+                        fontSize: '1rem'
+                    }}
+                />
+                <button
+                    onClick={handleAddKeyword}
+                    className="btn-secondary"
+                    disabled={!customKeyword.trim()}
+                    style={{ padding: '0 20px', whiteSpace: 'nowrap' }}
+                >
+                    + 추가
+                </button>
+            </div>
 
             <div style={{
                 display: 'grid',

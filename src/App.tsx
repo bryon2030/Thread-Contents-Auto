@@ -3,6 +3,7 @@ import { Layout } from './components/Layout';
 import { TargetStep } from './components/steps/TargetStep';
 import { KeywordStep } from './components/steps/KeywordStep';
 import { TopicStep } from './components/steps/TopicStep';
+import { ArticleStep } from './components/steps/ArticleStep';
 import { DraftStep } from './components/steps/DraftStep';
 import { SettingsModal } from './components/SettingsModal';
 import { AppProvider, useApp } from './store/AppContext';
@@ -25,7 +26,8 @@ function AppContent() {
       {app.step === 1 && <TargetStep />}
       {app.step === 2 && <KeywordStep />}
       {app.step === 3 && <TopicStep />}
-      {app.step === 4 && <DraftStep />}
+      {app.step === 4 && <ArticleStep />}
+      {app.step === 5 && <DraftStep />}
     </Layout>
   );
 }

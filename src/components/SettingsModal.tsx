@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Save, AlertTriangle, ExternalLink } from 'lucide-react';
+import { X, Save, AlertTriangle, ExternalLink, Copy, Check } from 'lucide-react';
 import { useApp } from '../store/AppContext';
 import type { AppSettings, AIProvider } from '../types';
 
@@ -10,6 +10,20 @@ interface SettingsModalProps {
 export function SettingsModal({ onClose }: SettingsModalProps) {
     const { settings, dispatch } = useApp();
     const [localSettings, setLocalSettings] = useState<AppSettings>(settings);
+    const [codeCopied, setCodeCopied] = useState(false);
+
+    const appsScriptCode = `function doPost(e){
+  var d=JSON.parse(e.postData.contents);
+  var s=SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  s.appendRow([new Date(), d.topic, d.summary, d.thoughts, d.draft]);
+  return ContentService.createTextOutput("OK");
+}`;
+
+    const handleCopyCode = async () => {
+        await navigator.clipboard.writeText(appsScriptCode);
+        setCodeCopied(true);
+        setTimeout(() => setCodeCopied(false), 2000);
+    };
 
     const handleSave = () => {
         dispatch({ type: 'SET_SETTINGS', payload: localSettings });
@@ -26,13 +40,13 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
             justifyContent: 'center',
             zIndex: 1000
         }}>
-            <div className="card" style={{ width: '90%', maxWidth: '500px', padding: '1.5rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+            <div className="card" style={{ width: '90%', maxWidth: '500px', maxHeight: '85vh', display: 'flex', flexDirection: 'column', padding: '1.5rem' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexShrink: 0 }}>
                     <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>설정</h2>
                     <button onClick={onClose} aria-label="닫기"><X size={20} /></button>
                 </div>
 
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem', overflowY: 'auto', flex: 1, paddingRight: '4px' }}>
 
                     {/* Provider Selection */}
                     <div>
@@ -103,6 +117,63 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                         </select>
                     </div>
 
+                    {/* Google Sheet Webhook */}
+                    <div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.5rem' }}>
+                            <label style={{ fontWeight: 600 }}>구글 시트 연동 (선택)</label>
+                        </div>
+                        <input
+                            type="text"
+                            value={localSettings.googleSheetUrl || ''}
+                            onChange={(e) => setLocalSettings({ ...localSettings, googleSheetUrl: e.target.value })}
+                            placeholder="https://script.google.com/macros/s/..."
+                            style={{
+                                width: '100%',
+                                padding: '10px',
+                                borderRadius: 'var(--radius-sm)',
+                                border: '1px solid hsl(var(--color-border))',
+                                fontSize: '0.875rem'
+                            }}
+                        />
+                        <div style={{ fontSize: '0.75rem', color: 'hsl(var(--color-text-secondary))', marginTop: '6px' }}>
+                            <details>
+                                <summary style={{ cursor: 'pointer' }}>연동 방법 보기 (웹훅 URL 발급)</summary>
+                                <ol style={{ paddingLeft: '1.2rem', marginTop: '4px', lineHeight: '1.5', background: 'hsl(var(--color-surface))', padding: '8px 1.2rem', borderRadius: '4px' }}>
+                                    <li>구글 시트 메뉴: <b>확장 프로그램 &gt; Apps Script</b> 클릭</li>
+                                    <li>코드창에 아래 코드를 복사해서 붙여넣기 (기존 내용 삭제)</li>
+                                    <li>우측 상단 <b>[배포] &gt; [새 배포]</b> 클릭</li>
+                                    <li>유형 선택: <b>웹 앱</b></li>
+                                    <li>액세스 권한: <b>모든 사용자(Anyone)</b> (필수!)</li>
+                                    <li>[배포] 후 생성된 <b>웹 앱 URL</b>을 여기에 입력</li>
+                                </ol>
+                                <div style={{ position: 'relative' }}>
+                                    <div style={{ background: '#f5f5f5', padding: '8px', paddingRight: '80px', borderRadius: '4px', marginTop: '4px', fontFamily: 'monospace', whiteSpace: 'pre-wrap', maxHeight: '60px', overflowY: 'auto' }}>
+                                        {appsScriptCode}
+                                    </div>
+                                    <button
+                                        onClick={handleCopyCode}
+                                        style={{
+                                            position: 'absolute',
+                                            top: '5px',
+                                            right: '5px',
+                                            background: 'white',
+                                            border: '1px solid #ccc',
+                                            borderRadius: '4px',
+                                            padding: '4px 8px',
+                                            fontSize: '0.75rem',
+                                            cursor: 'pointer',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '4px'
+                                        }}
+                                    >
+                                        {codeCopied ? <><Check size={12} /> 복사됨</> : <><Copy size={12} /> 코드 복사</>}
+                                    </button>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+
                     {/* Preferences */}
                     <div style={{ display: 'flex', gap: '1rem' }}>
                         <div style={{ flex: 1 }}>
@@ -148,8 +219,10 @@ export function SettingsModal({ onClose }: SettingsModalProps) {
                             <li>공용 PC에서는 '저장 안 함'을 권장합니다.</li>
                         </ul>
                     </div>
+                </div>
 
-                    <button className="btn-primary" onClick={handleSave} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                <div style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid hsl(var(--color-border))', flexShrink: 0 }}>
+                    <button className="btn-primary" onClick={handleSave} style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                         <Save size={18} /> 설정 저장
                     </button>
                 </div>

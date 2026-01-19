@@ -1,34 +1,17 @@
-import { useState } from 'react';
+
 import { ArrowRight } from 'lucide-react';
 import { useApp } from '../../store/AppContext';
-import { AIManager } from '../../services/ai/manager';
+
 
 export function TopicStep() {
-    const { app, settings, dispatch } = useApp();
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
+    const { app, dispatch } = useApp();
+
 
     const selectedTopic = app.topics.find(t => t.selected);
 
-    const handleNext = async () => {
+    const handleNext = () => {
         if (!selectedTopic) return;
-
-        setLoading(true);
-        setError(null);
-        try {
-            const drafts = await AIManager.generateDrafts(settings, selectedTopic.text, selectedTopic.userContext || '');
-            dispatch({ type: 'SET_DRAFTS', payload: drafts });
-            dispatch({ type: 'SET_STEP', payload: 4 });
-        } catch (err: any) {
-            console.error(err);
-            if (err.message === 'OpenAI API Call Failed' || err.message === 'Gemini API Call Failed') {
-                setError('API 호출 실패. API Key를 확인하세요.');
-            } else {
-                setError('본문을 생성하지 못했습니다.');
-            }
-        } finally {
-            setLoading(false);
-        }
+        dispatch({ type: 'SET_STEP', payload: 4 });
     };
 
     return (
@@ -111,17 +94,15 @@ export function TopicStep() {
                 <button
                     className="btn-primary"
                     onClick={handleNext}
-                    disabled={loading || !selectedTopic}
+                    disabled={!selectedTopic}
                     style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
                 >
-                    {loading ? '글 작성 중...' : (
-                        <>
-                            글 3가지 제안받기 <ArrowRight size={20} />
-                        </>
-                    )}
+                    <>
+                        관련 정보 추천받기 <ArrowRight size={20} />
+                    </>
                 </button>
             </div>
-            {error && <p style={{ color: 'hsl(var(--color-error))', fontSize: '0.875rem', marginTop: '8px', textAlign: 'center' }}>{error}</p>}
+
         </div>
     );
 }

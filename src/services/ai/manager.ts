@@ -1,7 +1,7 @@
 // import { DemoService } from './demo';
 import { OpenAIService } from './openai';
 import { GeminiService } from './gemini';
-import type { AppSettings, Keyword, Topic, Draft } from '../../types';
+import type { AppSettings, Keyword, Topic, Draft, Article } from '../../types';
 
 export const AIManager = {
     async generateKeywords(settings: AppSettings, target: string): Promise<Keyword[]> {
@@ -38,14 +38,44 @@ export const AIManager = {
         }
     },
 
-    async generateDrafts(settings: AppSettings, topic: string, context: string): Promise<Draft[]> {
+    async generateArticles(settings: AppSettings, topic: string): Promise<Article[]> {
         if (!settings.apiKey) throw new Error('API Key Required');
 
         try {
             if (settings.provider === 'openai') {
-                return await OpenAIService.generateDrafts(settings.apiKey, topic, context, settings.tone, settings.length);
+                return await OpenAIService.generateArticles(settings.apiKey, topic);
             } else {
-                return await GeminiService.generateDrafts(settings.apiKey, topic, context, settings.tone, settings.length);
+                return await GeminiService.generateArticles(settings.apiKey, topic);
+            }
+        } catch (error) {
+            console.error('API Call Failed', error);
+            throw error;
+        }
+    },
+
+    async summarizeArticles(settings: AppSettings, articles: Article[]): Promise<string> {
+        if (!settings.apiKey) throw new Error('API Key Required');
+
+        try {
+            if (settings.provider === 'openai') {
+                return await OpenAIService.summarizeArticles(settings.apiKey, articles);
+            } else {
+                return await GeminiService.summarizeArticles(settings.apiKey, articles);
+            }
+        } catch (error) {
+            console.error('API Call Failed', error);
+            throw error;
+        }
+    },
+
+    async generateDrafts(settings: AppSettings, topic: string, context: string, articleSummary: string = '', userThoughts: string = ''): Promise<Draft[]> {
+        if (!settings.apiKey) throw new Error('API Key Required');
+
+        try {
+            if (settings.provider === 'openai') {
+                return await OpenAIService.generateDrafts(settings.apiKey, topic, context, settings.tone, settings.length, articleSummary, userThoughts);
+            } else {
+                return await GeminiService.generateDrafts(settings.apiKey, topic, context, settings.tone, settings.length, articleSummary, userThoughts);
             }
         } catch (error) {
             console.error('API Call Failed', error);

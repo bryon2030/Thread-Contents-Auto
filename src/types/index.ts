@@ -10,6 +10,7 @@ export interface AppSettings {
     storageOption: 'none' | 'session' | 'local';
     tone: Tone;
     length: LengthOption;
+    googleSheetUrl?: string; // Webhook URL
 }
 
 export interface Keyword {
@@ -34,6 +35,14 @@ export interface Draft {
     content: string;
 }
 
+export interface Article {
+    id: string;
+    title: string;
+    url: string;
+    source?: string; // e.g. "Google News", "TechCrunch"
+    selected: boolean;
+    summary?: string; // Individual article summary (optional)
+}
 export interface AppState {
     step: number; // 0=Settings, 1=Target, 2=Keywords, 3=Topics, 4=Drafts
     mode: 'DEMO' | 'LIVE';
@@ -41,4 +50,8 @@ export interface AppState {
     keywords: Keyword[];
     topics: Topic[];
     drafts: Draft[];
+    // New fields for Article Step
+    articles: Article[];
+    articleSummary: string; // Combined summary
+    userThoughts: string;
 }
